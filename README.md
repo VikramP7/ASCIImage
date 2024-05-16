@@ -11,4 +11,4 @@ A python script to convert image files into ascii art displayed to the console.
 ![Image of ASCII art of Saturno Devorando a Su Hijo][zzimgSecondImg]
 
 [imgFirstImg]: /img/ASCIIDog.png
-[imgSecondImg]: /img/Saturno_Devorando_a_Su_Hijo.png
+[imgSecondImg]: /img/ASCII_Saturno_Devorando_a_Su_Hijo.pngSaturno_Devorando_a_Su_Hijo.png
