@@ -4,6 +4,7 @@ Started 2022, Updated 2024
 A python script to convert image files into ASCII art displayed to the console.
 
 ![Image of ASCII art of a dog][imgFirstImg]
+My dog Tia (... and yes she is wearing a bow tie!)
 
 ## Brief Description
 A hobby project born out of my love for art and code. Loving both of these worlds I wanted to put them together. With a few image files, some colourful ASCII escape codes, and some inovative characters. Art can be *drawn* to the console with the hit of the enter key.
@@ -11,6 +12,7 @@ A hobby project born out of my love for art and code. Loving both of these world
 Utilizing 28 possible characters to show brightness, and the full 0-255 rgb colour space. Any image can be turned into lines written to the console. 
 
 ![Image of ASCII art of Saturno Devorando a Su Hijo](/img/ASCII_Saturno_Devorando_a_Su_Hijo.png)
+Francisco Goya - Saturno Devorando a Su Hijo
 
 ## How It Works
 
