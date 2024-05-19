@@ -141,9 +141,6 @@ def PrintImage(path, height):
 
 
 if __name__ == "__main__":
-    for c in charDencity:
-        print(c, end="")
-    print()
     path = GetPath()
     scale = 0
     try:
