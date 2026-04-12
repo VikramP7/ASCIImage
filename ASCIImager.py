@@ -4,36 +4,50 @@ from PIL import Image
 # window sizes for resultant image in characters
 width = 240
 height = 135
-charDencity = [
-    chr(209),
-    chr(64),
-    chr(35),
-    chr(87),
-    chr(36),
-    chr(57),
-    chr(56),
-    chr(55),
-    chr(54),
-    chr(53),
-    chr(52),
-    chr(51),
-    chr(50),
-    chr(49),
-    chr(48),
-    chr(63),
-    chr(33),
-    chr(97),
-    chr(98),
-    chr(99),
-    chr(59),
-    chr(58),
-    chr(43),
-    chr(61),
-    chr(45),
-    chr(44),
-    chr(46),
-    chr(95),
-]
+charDensityOriginal = ['Ñ', '@', '#', 'W', '$', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '?', '!', 'a', 'b', 'c', ';', ':', '+', '=', '-', ',', '.', '_']
+
+# Punctuation only
+charDensity = ['@', '#', '&', '%', '$', '8', '?', '*', '+', '=', ';', ':', '~', '-', ',', '.', '`', ' ']
+
+charDensityPunct = ['@', '#', '&', '%', '$', '?', '!', '*', '+', '=', '/', '\\', '|', '(', ')', '[', ']', '<', '>', ';', ':', '"', "'", '~', '^', '-', ',', '.', '`', ' ']
+
+# Numbers only (0-9)
+charDensityNums = ['8', '0', '9', '6', '5', '3', '2', '4', '7', '1', ' ']
+
+# Letters only (mix of cases, ordered by visual density)
+charDensityLetters = ['M', 'W', 'N', 'Q', 'B', 'H', 'R', 'D', 'K', 'A', 'G', 'O', 'U', 'P', 'X', 'E', 'Z', 'S', 'Y', 'F', 'T', 'C', 'L', 'J', 'I', 'o', 'e', 'a', 'c', 'v', 'n', 'r', 's', 'x', 'z', 'i', 'l', 't', ';', ':', ',', '.', ' ']
+
+charDensityLettersPure = ['M', 'W', 'N', 'Q', 'B', 'H', 'R', 'D', 'K', 'A', 'G', 'O', 'U', 'P', 'X', 'E', 'Z', 'S', 'Y', 'F', 'T', 'C', 'L', 'J', 'I', 'o', 'e', 'a', 'c', 'u', 'v', 'n', 'r', 's', 'x', 'z', 'i', 'l', 'j']
+
+# Lowercase only
+charDensityLower = ['m', 'w', 'q', 'b', 'h', 'd', 'k', 'a', 'o', 'g', 'p', 'e', 'u', 'n', 'r', 'c', 's', 'v', 'x', 'z', 'y', 'f', 't', 'j', 'i', 'l']
+
+# Uppercase only
+charDensityUpper = ['M', 'W', 'N', 'Q', 'B', 'H', 'R', 'D', 'K', 'A', 'G', 'O', 'U', 'P', 'X', 'E', 'Z', 'S', 'Y', 'F', 'T', 'C', 'L', 'J', 'I']
+
+# Weird / extended ASCII & Unicode — block and shading characters
+charDensityBlocks = ['█', '▓', '▒', '░', '▚', '▞', '▙', '▟', '▜', '▛', '▀', '▄', '▐', '▌', '■', '□', '▪', '▫', '·', ' ']
+
+# Braille (each dot pattern has different density — really cool results)
+charDensityBraille = ['⣿', '⣾', '⣽', '⣻', '⢿', '⡿', '⣷', '⣯', '⣟', '⣞', '⣝', '⣛', '⣚', '⣙', '⣘', '⣗', '⣖', '⣕', '⣔', '⣓', '⣒', '⣑', '⣐', '⣏', '⣎', '⣍', '⣌', '⣋', '⣊', '⣉', '⣈', '⡇', '⠿', '⠾', '⠽', '⠼', '⠻', '⠺', '⠹', '⠸', '⠷', '⠶', '⠵', '⠴', '⠳', '⠲', '⠱', '⠰', '⠯', '⠮', '⠭', '⠬', '⠫', '⠪', '⠩', '⠨', '⠧', '⠦', '⠥', '⠤', '⠣', '⠢', '⠡', '⠠', '⠟', '⠞', '⠝', '⠜', '⠛', '⠚', '⠙', '⠘', '⠗', '⠖', '⠕', '⠔', '⠓', '⠒', '⠑', '⠐', '⠏', '⠎', '⠍', '⠌', '⠋', '⠊', '⠉', '⠈', '⠇', '⠆', '⠅', '⠄', '⠃', '⠂', '⠁', '⠀']
+
+# Math / symbols — chaotic but fun
+charDensityMath = ['∰', '∯', '∮', '∑', '∏', '∆', '∇', '∞', '≈', '≡', '≠', '±', '∓', '×', '÷', '√', '∝', '∂', '∫', '∈', '∋', '∪', '⊆', '⊇',  '∩', '⊂', '⊃', '∧', '∨', '¬', '→', '←', '↑', '↓', '·', '∘', '°', ' ']
+
+# Emoji-ish / geometric shapes
+charDensityShapes = ['█', '●', '◉', '◆', '◼', '■', '▲', '▼', '◀', '▶', '◈', '◇', '◊', '○', '◌', '◯', '△', '▽', '◁', '▷', '·', '˙', ' ']
+
+# Currency
+charDensityCurrency = ['₩', '₿', '﷼', '₪', '€', '£', '¥', '$', '₽', '₹', '₺', '₱', '₴', '₦', '₡', '₵', '¢', ' ']
+
+# Arrows
+charDensityArrows = ['⇚', '⇛', '⇐', '⇒', '⇑', '⇓', '⇔', '⇕', '←', '→', '↑', '↓', '↔', '↕', '↖', '↗', '↘', '↙', '↞', '↠', '↢', '↣', '⇠', '⇢', '⤂', '⤃', '·', ' ']
+
+# ASCII art classic (Paul Bourke's well-known 70-char ramp — the "correct" one)
+charDensityBourke = list('$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'. ')
+
+# Minimal 10-step ramp (classic, low-detail but clean)
+charDensityMinimal = ['@', '%', '#', '*', '+', '=', '-', ':', '.', ' ']
 
 
 def ColourToAscii(r, g, b):
@@ -43,12 +57,12 @@ def ColourToAscii(r, g, b):
     return retString
 
 
-def ColourToBrightness(r, g, b):
+def ColourToBrightness(r, g, b, densityList):
     """Finds the grayscale value of the colour and returns a char corresponding to that"""
     ave = (r + g + b) / 3.0
-    dencityPercent = ave / 255.0
-    charIndex = round(dencityPercent * len(charDencity))
-    char = charDencity[-charIndex]
+    densityPercent = ave / 255.0
+    charIndex = round(densityPercent * len(densityList))
+    char = densityList[-(charIndex + 1)] if charIndex < len(densityList) else densityList[0]
     return char
 
 
@@ -70,7 +84,7 @@ def GetPath():
     return path
 
 
-def PrintImage(path, height):
+def ASCIIifyImage(path, height, charDensityMap=charDensityBourke):
     """
     Uses the provided path to parse an image file. Then it's scaled it to fit better in the console.
     Finally the scaled image is converted to ascii characters and escape codes are used to colour it.
@@ -112,7 +126,7 @@ def PrintImage(path, height):
             charPixel = ColourToAscii(r, g, b)
             # add the actual character that is going to be coloured
             # adding it twice because text is taller than it is wide
-            charPixel += 2 * ColourToBrightness(r, g, b)
+            charPixel += 2 * ColourToBrightness(r, g, b, charDensityMap)
             line += charPixel
         lines.append("" + line)
         line = ""
@@ -129,7 +143,7 @@ if __name__ == "__main__":
     except ValueError:
         print("Error in reading width using default")
         scale = 70
-    outString = PrintImage(path, scale)
+    outString = ASCIIifyImage(path, scale, charDensityMap=charDensityMinimal)
     for i in range(0, len(outString)):
         print(outString[i])
     # sets console back to default
