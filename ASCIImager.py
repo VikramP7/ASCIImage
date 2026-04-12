@@ -1,4 +1,3 @@
-import math
 import numpy as np
 from PIL import Image
 
@@ -81,57 +80,39 @@ def PrintImage(path, height):
     :return: A list of strings, each element is a line of the image
     """
 
-    # print(len(imgArr))
-    # print(len(imgArr[0]))
+    # open image and convert to 3d array (int32 to avoid uint8 overflow when averaging)
+    image = Image.open(path).convert("RGB")
+    imgArr = np.asarray(image, dtype=np.int32)
 
-    # open image and convert to 3d array
-    image = Image.open(path)
-    imgArr = np.asarray(image)
-
-    # set result image
+    # compute scale factor and cropped dimensions
     scaleFactor = round(len(imgArr) / height)
-    resizeWidth = int(len(imgArr) / scaleFactor)
-    resizeHeight = int(len(imgArr[0]) / scaleFactor)
-    resizeImg = []
+    if scaleFactor < 1:
+        scaleFactor = 1
 
-    for x in range(0, resizeWidth):
-        resizeImg.append([])  # row
-        for y in range(0, resizeHeight):
-            resizeImg[x].append([])  # another array for r green and blue
-            for rgb in range(0, 3):
-                resizeImg[x][y].append(0)  # set rgb to 0
+    h, w = imgArr.shape[:2]
+    sh = h // scaleFactor
+    sw = w // scaleFactor
 
-    # find the average colour of the area that is scaled down
-    for x in range(0, len(resizeImg)):
-        for y in range(0, len(resizeImg[x])):
-            rAve = 0
-            gAve = 0
-            bAve = 0
-            for i in range(0, scaleFactor):
-                for j in range(0, scaleFactor):
-                    rAve += imgArr[(x * scaleFactor) + i][(y * scaleFactor) + j][0]
-                    gAve += imgArr[(x * scaleFactor) + i][(y * scaleFactor) + j][1]
-                    bAve += imgArr[(x * scaleFactor) + i][(y * scaleFactor) + j][2]
-            rAve = rAve / (scaleFactor * scaleFactor)
-            gAve = gAve / (scaleFactor * scaleFactor)
-            bAve = bAve / (scaleFactor * scaleFactor)
-            resizeImg[x][y][0] = int(rAve)
-            resizeImg[x][y][1] = int(gAve)
-            resizeImg[x][y][2] = int(bAve)
+    # crop so dimensions are divisible by scaleFactor, then block-average via reshape
+    cropped = imgArr[:sh * scaleFactor, :sw * scaleFactor, :3]
+    resizeImg = (
+        cropped.reshape(sh, scaleFactor, sw, scaleFactor, 3)
+        .mean(axis=(1, 3))
+        .astype(np.uint8)
+    )
 
     line = ""
     lines = []
     for x in range(0, len(resizeImg)):
         for y in range(0, len(resizeImg[x])):
+            r = int(resizeImg[x][y][0])
+            g = int(resizeImg[x][y][1])
+            b = int(resizeImg[x][y][2])
             # set the colour of the char pixel
-            charPixel = ColourToAscii(
-                resizeImg[x][y][0], resizeImg[x][y][1], resizeImg[x][y][2]
-            )
+            charPixel = ColourToAscii(r, g, b)
             # add the actual character that is going to be coloured
-            charPixel += 2 * ColourToBrightness(
-                resizeImg[x][y][0], resizeImg[x][y][1], resizeImg[x][y][2]
-            )
             # adding it twice because text is taller than it is wide
+            charPixel += 2 * ColourToBrightness(r, g, b)
             line += charPixel
         lines.append("" + line)
         line = ""
