@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+import sys
 
 # window sizes for resultant image in characters
 width = 240
@@ -132,19 +133,25 @@ def ASCIIifyImage(path, height, charDensityMap=charDensityBourke):
         line = ""
 
     print("\u001b[0m")
-    return lines
+    return lines, len(resizeImg), len(resizeImg[0])*2
 
 
 if __name__ == "__main__":
-    path = GetPath()
-    scale = 0
-    try:
-        scale = int(input("What should the result image height be (whole number): "))
-    except ValueError:
-        print("Error in reading width using default")
-        scale = 70
-    outString = ASCIIifyImage(path, scale, charDensityMap=charDensityMinimal)
+    if len(sys.argv) > 1:
+        path = sys.argv[1]
+        lines = int(sys.argv[2])
+    else:
+        path = GetPath()
+        lines = 0
+        try:
+            lines = int(input("What should the result image height be (whole number): "))
+        except ValueError:
+            print("Error in reading width using default")
+            lines = 70
+    outString, term_height, term_width = ASCIIifyImage(path, lines, charDensityMap=charDensityBourke)
+    print(f"Shape: {term_width}x{term_height}")
     for i in range(0, len(outString)):
-        print(outString[i])
+        print()
+        print(outString[i], end="")
     # sets console back to default
     print("\u001b[0m")
