@@ -51,8 +51,17 @@ charDensityBourke = list('$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_
 charDensityMinimal = ['@', '%', '#', '*', '+', '=', '-', ':', '.', ' ']
 
 
-def ColourToAscii(r, g, b):
+def ColourToAscii(r, g, b, gamma_y=1):
     """Returns the ASCII escape code for setting text colour to the specified RGB"""
+    # apply gamma 
+    # r = min(round(r+(r*(gamma_y-1)*0.3)), 256)
+    # g = min(round(g+(g*(gamma_y-1)*0.59)), 256)
+    # b = min(round(b+(b*(gamma_y-1)*0.11)), 256)
+
+    r = min(round(r+(255-r)*(gamma_y-1)), 256)
+    g = min(round(g+(255-g)*(gamma_y-1)), 256)
+    b = min(round(b+(255-b)*(gamma_y-1)), 256)
+
     setForeground = "\u001b[38;2;"
     retString = setForeground + str(r) + ";" + str(g) + ";" + str(b) + "m"
     return retString
@@ -85,7 +94,7 @@ def GetPath():
     return path
 
 
-def ASCIIifyImage(path, height, charDensityMap=charDensityBourke):
+def ASCIIifyImage(path, height, gamma_y=1, charDensityMap=charDensityBourke):
     """
     Uses the provided path to parse an image file. Then it's scaled it to fit better in the console.
     Finally the scaled image is converted to ascii characters and escape codes are used to colour it.
@@ -124,7 +133,7 @@ def ASCIIifyImage(path, height, charDensityMap=charDensityBourke):
             g = int(resizeImg[x][y][1])
             b = int(resizeImg[x][y][2])
             # set the colour of the char pixel
-            charPixel = ColourToAscii(r, g, b)
+            charPixel = ColourToAscii(r, g, b, gamma_y=gamma_y)
             # add the actual character that is going to be coloured
             # adding it twice because text is taller than it is wide
             charPixel += 2 * ColourToBrightness(r, g, b, charDensityMap)
@@ -148,7 +157,7 @@ if __name__ == "__main__":
         except ValueError:
             print("Error in reading width using default")
             lines = 70
-    outString, term_height, term_width = ASCIIifyImage(path, lines, charDensityMap=charDensityBourke)
+    outString, term_height, term_width = ASCIIifyImage(path, lines, gamma_y=1, charDensityMap=charDensityBourke[:40])
     print(f"Shape: {term_width}x{term_height}")
     for i in range(0, len(outString)):
         print()
