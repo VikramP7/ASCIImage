@@ -1,55 +1,13 @@
 import numpy as np
 from PIL import Image
 import sys
+import CharacterDensities
 
 # window sizes for resultant image in characters
 width = 240
 height = 135
 charDensityOriginal = ['Ñ', '@', '#', 'W', '$', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '?', '!', 'a', 'b', 'c', ';', ':', '+', '=', '-', ',', '.', '_']
-
-# Punctuation only
-charDensity = ['@', '#', '&', '%', '$', '8', '?', '*', '+', '=', ';', ':', '~', '-', ',', '.', '`', ' ']
-
-charDensityPunct = ['@', '#', '&', '%', '$', '?', '!', '*', '+', '=', '/', '\\', '|', '(', ')', '[', ']', '<', '>', ';', ':', '"', "'", '~', '^', '-', ',', '.', '`', ' ']
-
-# Numbers only (0-9)
-charDensityNums = ['8', '0', '9', '6', '5', '3', '2', '4', '7', '1', ' ']
-
-# Letters only (mix of cases, ordered by visual density)
-charDensityLetters = ['M', 'W', 'N', 'Q', 'B', 'H', 'R', 'D', 'K', 'A', 'G', 'O', 'U', 'P', 'X', 'E', 'Z', 'S', 'Y', 'F', 'T', 'C', 'L', 'J', 'I', 'o', 'e', 'a', 'c', 'v', 'n', 'r', 's', 'x', 'z', 'i', 'l', 't', ';', ':', ',', '.', ' ']
-
-charDensityLettersPure = ['M', 'W', 'N', 'Q', 'B', 'H', 'R', 'D', 'K', 'A', 'G', 'O', 'U', 'P', 'X', 'E', 'Z', 'S', 'Y', 'F', 'T', 'C', 'L', 'J', 'I', 'o', 'e', 'a', 'c', 'u', 'v', 'n', 'r', 's', 'x', 'z', 'i', 'l', 'j']
-
-# Lowercase only
-charDensityLower = ['m', 'w', 'q', 'b', 'h', 'd', 'k', 'a', 'o', 'g', 'p', 'e', 'u', 'n', 'r', 'c', 's', 'v', 'x', 'z', 'y', 'f', 't', 'j', 'i', 'l']
-
-# Uppercase only
-charDensityUpper = ['M', 'W', 'N', 'Q', 'B', 'H', 'R', 'D', 'K', 'A', 'G', 'O', 'U', 'P', 'X', 'E', 'Z', 'S', 'Y', 'F', 'T', 'C', 'L', 'J', 'I']
-
-# Weird / extended ASCII & Unicode — block and shading characters
-charDensityBlocks = ['█', '▓', '▒', '░', '▚', '▞', '▙', '▟', '▜', '▛', '▀', '▄', '▐', '▌', '■', '□', '▪', '▫', '·', ' ']
-
-# Braille (each dot pattern has different density — really cool results)
-charDensityBraille = ['⣿', '⣾', '⣽', '⣻', '⢿', '⡿', '⣷', '⣯', '⣟', '⣞', '⣝', '⣛', '⣚', '⣙', '⣘', '⣗', '⣖', '⣕', '⣔', '⣓', '⣒', '⣑', '⣐', '⣏', '⣎', '⣍', '⣌', '⣋', '⣊', '⣉', '⣈', '⡇', '⠿', '⠾', '⠽', '⠼', '⠻', '⠺', '⠹', '⠸', '⠷', '⠶', '⠵', '⠴', '⠳', '⠲', '⠱', '⠰', '⠯', '⠮', '⠭', '⠬', '⠫', '⠪', '⠩', '⠨', '⠧', '⠦', '⠥', '⠤', '⠣', '⠢', '⠡', '⠠', '⠟', '⠞', '⠝', '⠜', '⠛', '⠚', '⠙', '⠘', '⠗', '⠖', '⠕', '⠔', '⠓', '⠒', '⠑', '⠐', '⠏', '⠎', '⠍', '⠌', '⠋', '⠊', '⠉', '⠈', '⠇', '⠆', '⠅', '⠄', '⠃', '⠂', '⠁', '⠀']
-
-# Math / symbols — chaotic but fun
-charDensityMath = ['∰', '∯', '∮', '∑', '∏', '∆', '∇', '∞', '≈', '≡', '≠', '±', '∓', '×', '÷', '√', '∝', '∂', '∫', '∈', '∋', '∪', '⊆', '⊇',  '∩', '⊂', '⊃', '∧', '∨', '¬', '→', '←', '↑', '↓', '·', '∘', '°', ' ']
-
-# Emoji-ish / geometric shapes
-charDensityShapes = ['█', '●', '◉', '◆', '◼', '■', '▲', '▼', '◀', '▶', '◈', '◇', '◊', '○', '◌', '◯', '△', '▽', '◁', '▷', '·', '˙', ' ']
-
-# Currency
-charDensityCurrency = ['₩', '₿', '﷼', '₪', '€', '£', '¥', '$', '₽', '₹', '₺', '₱', '₴', '₦', '₡', '₵', '¢', ' ']
-
-# Arrows
-charDensityArrows = ['⇚', '⇛', '⇐', '⇒', '⇑', '⇓', '⇔', '⇕', '←', '→', '↑', '↓', '↔', '↕', '↖', '↗', '↘', '↙', '↞', '↠', '↢', '↣', '⇠', '⇢', '⤂', '⤃', '·', ' ']
-
-# ASCII art classic (Paul Bourke's well-known 70-char ramp — the "correct" one)
 charDensityBourke = list('$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'. ')
-
-# Minimal 10-step ramp (classic, low-detail but clean)
-charDensityMinimal = ['@', '%', '#', '*', '+', '=', '-', ':', '.', ' ']
-
 
 def ColourToAscii(r, g, b, gamma_y=1):
     """Returns the ASCII escape code for setting text colour to the specified RGB"""
