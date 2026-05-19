@@ -1,7 +1,90 @@
+import os
+import sys
+import re
 import numpy as np
 from PIL import Image
-import sys
+from rich.console import Console
+from rich.text import Text
 import CharacterDensities
+
+NO_CHROME_SVG_FORMAT = """\
+<svg class="rich-terminal" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+    <style>
+    .{unique_id}-matrix {{
+        font-family: Fira Code, monospace;
+        font-size: {char_height}px;
+        line-height: {line_height}px;
+        font-variant-east-asian: full-width;
+    }}
+    {styles}
+    </style>
+    <defs>
+    <clipPath id="{unique_id}-clip-terminal">
+      <rect x="0" y="0" width="{terminal_width}" height="{terminal_height}" />
+    </clipPath>
+    {lines}
+    </defs>
+    <rect fill="#0c0c0c" x="0" y="0" width="{width}" height="{height}" rx="8"/>
+    <g transform="translate(9, 9)" clip-path="url(#{unique_id}-clip-terminal)">
+    {backgrounds}
+    <g class="{unique_id}-matrix">
+    {matrix}
+    </g>
+    </g>
+</svg>
+"""
+TIGHT_SVG_FORMAT = """\
+<svg class="rich-terminal" viewBox="0 0 {terminal_width} {terminal_height}" xmlns="http://www.w3.org/2000/svg">
+    <style>
+    .{unique_id}-matrix {{
+        font-family: Fira Code, monospace;
+        font-size: {char_height}px;
+        line-height: {line_height}px;
+        font-variant-east-asian: full-width;
+    }}
+    {styles}
+    </style>
+    <defs>
+    <clipPath id="{unique_id}-clip-terminal">
+      <rect x="0" y="0" width="{terminal_width}" height="{terminal_height}" />
+    </clipPath>
+    {lines}
+    </defs>
+    <rect fill="#0c0c0c" x="0" y="0" width="{terminal_width}" height="{terminal_height}"/>
+    <g clip-path="url(#{unique_id}-clip-terminal)">
+    {backgrounds}
+    <g class="{unique_id}-matrix">
+    {matrix}
+    </g>
+    </g>
+</svg>
+"""
+TIGHT_TRANSPARENT_SVG_FORMAT = """\
+<svg class="rich-terminal" viewBox="0 0 {terminal_width} {terminal_height}" xmlns="http://www.w3.org/2000/svg">
+    <style>
+    .{unique_id}-matrix {{
+        font-family: Fira Code, monospace;
+        font-size: {char_height}px;
+        line-height: {line_height}px;
+        font-variant-east-asian: full-width;
+    }}
+    {styles}
+    </style>
+    <defs>
+    <clipPath id="{unique_id}-clip-terminal">
+      <rect x="0" y="0" width="{terminal_width}" height="{terminal_height}" />
+    </clipPath>
+    {lines}
+    </defs>
+    <g clip-path="url(#{unique_id}-clip-terminal)">
+    {backgrounds}
+    <g class="{unique_id}-matrix">
+    {matrix}
+    </g>
+    </g>
+</svg>
+"""
+
 
 # window sizes for resultant image in characters
 width = 240
@@ -104,9 +187,42 @@ def ASCIIifyImage(path, height, gamma_y=1, charDensityMap=charDensityBourke):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
+    path = None
+    lines = 70
+    saving = False
+    save_path = None
+    transparent = False
+    if len(sys.argv) == 2:
+        print("HELP MENU:\n\tpython ASCIImager.py [./path/to/img] [LineCount] [-s] [-t]\n\n\t-s is used to save the console output to .svg (saves to the `./path/to/img`)\n\t-t is used to save the image as a transparent background")
+        exit(0)
+
+    elif len(sys.argv) == 3:
         path = sys.argv[1]
-        lines = int(sys.argv[2])
+        if not os.path.isfile(path):
+            print("Source file doesn't exist!")
+            exit(1)
+        try:
+            lines = int(sys.argv[2])
+        except ValueError:
+            print("Invalid number of lines using default 70")
+            lines = 70
+
+    elif len(sys.argv) >= 4:
+        path = sys.argv[1]
+        if not os.path.isfile(path):
+            print("Source file doesn't exist!")
+            exit(1)
+        try:
+            lines = int(sys.argv[2])
+        except ValueError:
+            print("Invalid number of lines using default 70")
+            lines = 70
+        if str(sys.argv[3]).lower().count('s') != 0:
+            saving = True
+            save_path = path[:path.rfind('.')] + "_svg.svg"
+        if len(sys.argv) == 5:
+            transparent = True
+
     else:
         path = GetPath()
         lines = 0
@@ -115,10 +231,25 @@ if __name__ == "__main__":
         except ValueError:
             print("Error in reading width using default")
             lines = 70
+    if (path == None):
+        print("ERR: Bad Path")
+        exit(1)
+
+    saving = True
     outString, term_height, term_width = ASCIIifyImage(path, lines, gamma_y=1, charDensityMap=charDensityBourke[:40])
     print(f"Shape: {term_width}x{term_height}")
+    
+    console = Console(record=True, width=term_width)
     for i in range(0, len(outString)):
-        print()
-        print(outString[i], end="")
+        console.print()
+        parsed = Text.from_ansi(outString[i])
+        console.print(parsed, end="")
+
+    if saving:
+        if transparent:
+            console.save_svg(save_path, code_format=TIGHT_TRANSPARENT_SVG_FORMAT)
+        else:
+            console.save_svg(save_path, code_format=TIGHT_SVG_FORMAT)
+    
     # sets console back to default
-    print("\u001b[0m")
+    console.print("\u001b[0m")
