@@ -50,7 +50,7 @@ TIGHT_SVG_FORMAT = """\
     </clipPath>
     {lines}
     </defs>
-    <rect fill="#0c0c0c" x="0" y="0" width="{terminal_width}" height="{terminal_height}"/>
+    <rect fill="#000000" x="0" y="0" width="{terminal_width}" height="{terminal_height}"/>
     <g clip-path="url(#{unique_id}-clip-terminal)">
     {backgrounds}
     <g class="{unique_id}-matrix">
