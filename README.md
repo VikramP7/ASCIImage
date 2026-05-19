@@ -16,6 +16,23 @@ Utilizing 28 possible characters to show brightness, and the full 0-255 rgb colo
 
 *Francisco Goya - Saturno Devorando a Su Hijo*
 
+## How to Run It
+Set up the python environment:
+`python -m venv .venv`
+`.venv\Scripts\activate`
+`python.exe -m pip install --upgrade pip`
+
+Now install the nessasary libraries 
+`pip install numpy`
+`pip install pillow`
+`pip install rich`
+
+In your environment run the command
+`python ASCIImager.py [./path/to/img] [LineCount] [-s] [-t]`
+
+`-s` is used to save the console output to .svg (saves to the `./path/to/img`)
+`-t` is used to save the image as a transparent background
+
 ## How It Works
 
 The program produces an artistic output using four main steps:
