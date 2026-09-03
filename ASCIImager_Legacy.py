@@ -1,89 +1,7 @@
 import os
 import sys
-import re
 import numpy as np
 from PIL import Image
-from rich.console import Console
-from rich.text import Text
-import CharacterDensities
-
-NO_CHROME_SVG_FORMAT = """\
-<svg class="rich-terminal" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
-    <style>
-    .{unique_id}-matrix {{
-        font-family: Fira Code, monospace;
-        font-size: {char_height}px;
-        line-height: {line_height}px;
-        font-variant-east-asian: full-width;
-    }}
-    {styles}
-    </style>
-    <defs>
-    <clipPath id="{unique_id}-clip-terminal">
-      <rect x="0" y="0" width="{terminal_width}" height="{terminal_height}" />
-    </clipPath>
-    {lines}
-    </defs>
-    <rect fill="#0c0c0c" x="0" y="0" width="{width}" height="{height}" rx="8"/>
-    <g transform="translate(9, 9)" clip-path="url(#{unique_id}-clip-terminal)">
-    {backgrounds}
-    <g class="{unique_id}-matrix">
-    {matrix}
-    </g>
-    </g>
-</svg>
-"""
-TIGHT_SVG_FORMAT = """\
-<svg class="rich-terminal" viewBox="0 0 {terminal_width} {terminal_height}" xmlns="http://www.w3.org/2000/svg">
-    <style>
-    .{unique_id}-matrix {{
-        font-family: Fira Code, monospace;
-        font-size: {char_height}px;
-        line-height: {line_height}px;
-        font-variant-east-asian: full-width;
-    }}
-    {styles}
-    </style>
-    <defs>
-    <clipPath id="{unique_id}-clip-terminal">
-      <rect x="0" y="0" width="{terminal_width}" height="{terminal_height}" />
-    </clipPath>
-    {lines}
-    </defs>
-    <rect fill="#000000" x="0" y="0" width="{terminal_width}" height="{terminal_height}"/>
-    <g clip-path="url(#{unique_id}-clip-terminal)">
-    {backgrounds}
-    <g class="{unique_id}-matrix">
-    {matrix}
-    </g>
-    </g>
-</svg>
-"""
-TIGHT_TRANSPARENT_SVG_FORMAT = """\
-<svg class="rich-terminal" viewBox="0 0 {terminal_width} {terminal_height}" xmlns="http://www.w3.org/2000/svg">
-    <style>
-    .{unique_id}-matrix {{
-        font-family: Fira Code, monospace;
-        font-size: {char_height}px;
-        line-height: {line_height}px;
-        font-variant-east-asian: full-width;
-    }}
-    {styles}
-    </style>
-    <defs>
-    <clipPath id="{unique_id}-clip-terminal">
-      <rect x="0" y="0" width="{terminal_width}" height="{terminal_height}" />
-    </clipPath>
-    {lines}
-    </defs>
-    <g clip-path="url(#{unique_id}-clip-terminal)">
-    {backgrounds}
-    <g class="{unique_id}-matrix">
-    {matrix}
-    </g>
-    </g>
-</svg>
-"""
 
 
 # window sizes for resultant image in characters
@@ -239,17 +157,5 @@ if __name__ == "__main__":
     outString, term_height, term_width = ASCIIifyImage(path, lines, gamma_y=1, charDensityMap=charDensityBourke[:40])
     print(f"Shape: {term_width}x{term_height}")
     
-    console = Console(record=True, width=term_width)
-    for i in range(0, len(outString)):
-        console.print()
-        parsed = Text.from_ansi(outString[i])
-        console.print(parsed, end="")
-
-    if saving:
-        if transparent:
-            console.save_svg(save_path, code_format=TIGHT_TRANSPARENT_SVG_FORMAT)
-        else:
-            console.save_svg(save_path, code_format=TIGHT_SVG_FORMAT)
-    
     # sets console back to default
-    console.print("\u001b[0m")
+    print("\u001b[0m")
