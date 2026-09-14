@@ -11,7 +11,7 @@ Requires numpy and pillow.
     python asciicrt.py photo.jpg --rows 60 --show --no-raster
     python asciicrt.py photo.jpg --rows 180 --width-in 12 --height-in 18 --dpi 300 -o print.tiff
     python asciicrt.py photo.jpg --rows 120 --svg art.svg --no-raster
-    python asciicrt.py photo.jpg --rows 140 --preset clean -o print.png
+    python asciicrt.py photo.jpg --rows 140 --preset pop -o print.png
 
 Iterating on the CRT look without repeating the ASCII pass:
 
@@ -631,26 +631,26 @@ class CRT:
     output resolution reproduces identically at any other.
     """
     # optics
-    focus: float = 0.045           # beam defocus, in cell widths
-    bloom: float = 0.50            # phosphor glow strength
-    bloom_radius: float = 0.35     # in cell heights
+    focus: float = 0.0           # beam defocus, in cell widths
+    bloom: float = 0.60            # phosphor glow strength
+    bloom_radius: float = 0.4     # in cell heights
     bloom_threshold: float = 0.35
     halation: float = 0.30         # red bias of the widest glow halo
     # analogue signal
-    chroma_bleed: float = 0.40     # horizontal chroma smear, in cell widths
-    luma_bleed: float = 0.05       # horizontal luma smear, in cell widths
+    chroma_bleed: float = 0.0     # horizontal chroma smear, in cell widths
+    luma_bleed: float = 0.0       # horizontal luma smear, in cell widths
     # raster structure
-    scanline_depth: float = 0.75
+    scanline_depth: float = 0.9
     scanlines_per_row: float = 3.0
-    scanline_sigma: float = 0.19    # beam half-width as a fraction of pitch
+    scanline_sigma: float = 0.2    # beam half-width as a fraction of pitch
     scanline_shape: float = 1.0     # 1 = gaussian beam, >4 = hard square wave
-    scanline_phase: float = 0.0     # shift the raster relative to the text grid
+    scanline_phase: float = 0.2     # shift the raster relative to the text grid
     mask_strength: float = 0.0     # aperture grille (off by default)
     mask_pitch: float = 0.34       # in cell widths
     # colour / tube
     phosphor: str = "color"        # color | green | amber | white | blue
-    saturation: float = 1.06
-    black_level: float = 0.012
+    saturation: float = 1.09
+    black_level: float = 0.002
     contrast: float = 1.05
     brightness: float = 1.0
     gamma: float = 1.0
@@ -678,33 +678,28 @@ PRESETS = {
     "none": dict(focus=0, bloom=0, chroma_bleed=0, luma_bleed=0, scanline_depth=0,
                  mask_strength=0, saturation=1, black_level=0, contrast=1,
                  noise=0, vignette=0, beam_gain=0),
-    "subtle": dict(focus=0.03, bloom=0.28, bloom_radius=0.38, chroma_bleed=0.22,
-                   luma_bleed=0.03, scanline_depth=0.45, scanline_sigma=0.24,
-                   noise=0.007, vignette=0.14),
+    "subtle": dict(focus=0, bloom=0.28, bloom_radius=0.4, chroma_bleed=0.0,
+                   luma_bleed=0.0, scanline_depth=0.75, scanline_sigma=0.25,
+                   black_level=0.001, noise=0.007, vignette=0.14),
     "classic": dict(),  # dataclass defaults
-    "heavy": dict(focus=0.08, bloom=0.80, bloom_radius=0.65, bloom_threshold=0.26,
-                  halation=0.45, chroma_bleed=0.75, luma_bleed=0.11,
-                  scanline_depth=1.0, scanline_sigma=0.15, mask_strength=0.20,
-                  saturation=1.15,
-                  black_level=0.025, contrast=1.10, noise=0.018, hum=0.015,
-                  vignette=0.38),
-    "crisp": dict(focus=0.0, luma_bleed=0.0, chroma_bleed=0.25, bloom=0.22,
-                  bloom_radius=0.22, bloom_threshold=0.55, halation=0.15,
-                  scanline_depth=0.7, scanline_sigma=0.17, sharpen=0.35,
-                  noise=0.008, vignette=0.16),
+    "heavy": dict(focus=0.06, bloom=1.0, bloom_radius=0.65, bloom_threshold=0.26,
+                  halation=0.45, chroma_bleed=0.1, luma_bleed=0.03,
+                  scanline_depth=0.96, scanline_sigma=0.21, mask_strength=0.20,
+                  saturation=1.15, black_level=0.008, contrast=1.10, brightness=1.5,
+                  noise=0.01, hum=0.015, vignette=0.38),
     # Screen-shader look: hard square-wave scanlines, no optics, deep blacks
-    "clean": dict(focus=0.0, luma_bleed=0.0, chroma_bleed=0.0, bloom=0.4,
+    "pop": dict(focus=0.0, luma_bleed=0.0, chroma_bleed=0.0, bloom=0.8,
                   halation=0.0, scanline_depth=0.91, scanline_sigma=0.25,
                   scanline_shape=8.0, scanlines_per_row=4.0, scanline_phase=0.25,
-                  beam_gain=0.0, saturation=1.15, black_level=0.0, contrast=1.0, brightness=1.0,
+                  beam_gain=0.0, saturation=1.15, black_level=0.0, contrast=1.2, brightness=1.5,
                   sharpen=0.0, noise=0.0, vignette=0.0),
     "green": dict(phosphor="green", bloom=0.70, bloom_radius=0.55, halation=0.0,
-                  chroma_bleed=0.0, luma_bleed=0.06, scanline_depth=0.85,
-                  scanline_sigma=0.17, black_level=0.018, contrast=1.08,
+                  chroma_bleed=0.0, luma_bleed=0.02, scanline_depth=0.85,
+                  scanline_sigma=0.2, black_level=0.018, contrast=1.08,
                   noise=0.014, vignette=0.32),
     "amber": dict(phosphor="amber", bloom=0.70, bloom_radius=0.55, halation=0.15,
-                  chroma_bleed=0.0, luma_bleed=0.06, scanline_depth=0.85,
-                  scanline_sigma=0.17, black_level=0.018, contrast=1.08,
+                  chroma_bleed=0.0, luma_bleed=0.02, scanline_depth=0.85,
+                  scanline_sigma=0.2, black_level=0.018, contrast=1.08,
                   noise=0.014, vignette=0.32),
 }
 

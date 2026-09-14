@@ -198,8 +198,7 @@ look you tune on a fast preview reproduces identically on a full-size print.
 | preset | optics | raster | good for |
 |---|---|---|---|
 | `none` | none | none | a clean, unprocessed terminal render |
-| `clean` | none | hard square wave | sharp, bright, punchy shader look |
-| `crisp` | minimal, with unsharp | round beam | CRT character with no softness cost |
+| `pop` | none | hard square wave | sharp, bright, punchy shader look |
 | `subtle` | light | round beam | a gentle period flavour |
 | `classic` | full | round beam | a photographed tube |
 | `heavy` | heavy | round beam | a worn out monitor |
@@ -207,10 +206,10 @@ look you tune on a fast preview reproduces identically on a full-size print.
 
 | | |
 |:---:|:---:|
-| <img src="./img/preset_clean.png" width="80%" alt="clean preset"> | <img src="./img/preset_crisp.png" width="80%" alt="crisp preset"> |
-| `clean` | `crisp` |
-| <img src="./img/preset_classic.png" width="80%" alt="classic preset"> | <img src="./img/preset_amber.png" width="80%" alt="amber preset"> |
-| `classic` | `amber` |
+| <img src="./img/preset_pop.png" width="80%" alt="none preset"> | <img src="./img/preset_classic.png" width="80%" alt="heavy preset"> |
+| `pop` | `classic` |
+| <img src="./img/preset_heavy.png" width="80%" alt="heavy preset"> | <img src="./img/preset_amber.png" width="80%" alt="amber preset"> |
+| `heavy` | `amber` |
 
 Small renders so the raster stays visible in the browser. On a full sheet the
 scanlines read as texture rather than stripes.
@@ -294,9 +293,9 @@ the resolved set with `--dump-params file.json`.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `focus` | 0.045 | Isotropic beam defocus, in cell widths |
-| `bloom` | 0.50 | Phosphor glow amount. The largest single influence on apparent softness |
-| `bloom_radius` | 0.35 | Glow radius in cell heights, spread over octaves at 0.3x, 1.0x and 2.5x |
+| `focus` | 0.0 | Isotropic beam defocus, in cell widths |
+| `bloom` | 0.60 | Phosphor glow amount. The largest single influence on apparent softness |
+| `bloom_radius` | 0.4 | Glow radius in cell heights, spread over octaves at 0.3x, 1.0x and 2.5x |
 | `bloom_threshold` | 0.35 | Luminance above which pixels glow. Raise to confine glow to genuine highlights |
 | `halation` | 0.30 | Red bias of the widest glow octave, the scatter of light through the glass |
 
@@ -304,18 +303,18 @@ the resolved set with `--dump-params file.json`.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `chroma_bleed` | 0.40 | Horizontal chroma smear in cell widths. Costs no sharpness, luminance is untouched |
+| `chroma_bleed` | 0.0 | Horizontal chroma smear in cell widths. Costs no sharpness, luminance is untouched |
 | `luma_bleed` | 0.05 | Horizontal luminance smear in cell widths |
 
 ### Raster structure
 
 | Parameter | Default | Description |
 |---|---|---|
-| `scanline_depth` | 0.75 | Scan line contrast. Applied in linear light, so a 2:1 ratio on screen needs roughly 0.79 here |
+| `scanline_depth` | 0.9 | Scan line contrast. Applied in linear light, so a 2:1 ratio on screen needs roughly 0.79 here |
 | `scanlines_per_row` | 3.0 | Scan lines per character row. Pitch is cell height divided by this |
-| `scanline_sigma` | 0.19 | Beam half-width as a fraction of pitch. With a square wave the bright duty cycle is exactly twice this |
+| `scanline_sigma` | 0.2 | Beam half-width as a fraction of pitch. With a square wave the bright duty cycle is exactly twice this |
 | `scanline_shape` | 1.0 | Beam cross-section. `1` is a round gaussian beam, `4` and above is a hard square wave |
-| `scanline_phase` | 0.0 | Shifts the raster against the text grid. Matters below about 3px pitch |
+| `scanline_phase` | 0.2 | Shifts the raster against the text grid. Matters below about 3px pitch |
 | `mask_strength` | 0.0 | Aperture grille RGB stripe. Off by default |
 | `mask_pitch` | 0.34 | Triad pitch in cell widths |
 
@@ -324,7 +323,7 @@ the resolved set with `--dump-params file.json`.
 | Parameter | Default | Description |
 |---|---|---|
 | `phosphor` | `color` | `color`, `green`, `amber`, `white` or `blue` |
-| `saturation` | 1.06 | Colour saturation, colour phosphor only |
+| `saturation` | 1.09 | Colour saturation, colour phosphor only |
 | `beam_gain` | 0.75 | Restores highlight brightness lost to blurring thin strokes |
 | `black_level` | 0.012 | Lifts blacks, since a tube never reaches true black |
 | `contrast` | 1.05 | Tube transfer curve exponent |
@@ -534,9 +533,9 @@ python asciicrt.py ./img/source/tia.jpg --rows 70 --px-width 1600 --dpi 96 --bit
 The four preset tiles:
 
 ```
-python asciicrt.py ./img/source/tia.jpg --rows 50 --px-width 700 --bit-depth 8 --preset clean   -o ./img/preset_clean.png
-python asciicrt.py ./img/source/tia.jpg --rows 50 --px-width 700 --bit-depth 8 --preset crisp   -o ./img/preset_crisp.png
+python asciicrt.py ./img/source/tia.jpg --rows 50 --px-width 700 --bit-depth 8 --preset pop     -o ./img/preset_pop.png
 python asciicrt.py ./img/source/tia.jpg --rows 50 --px-width 700 --bit-depth 8 --preset classic -o ./img/preset_classic.png
+python asciicrt.py ./img/source/tia.jpg --rows 50 --px-width 700 --bit-depth 8 --preset heavy   -o ./img/preset_heavy.png
 python asciicrt.py ./img/source/tia.jpg --rows 50 --px-width 700 --bit-depth 8 --preset amber   -o ./img/preset_amber.png
 ```
 
